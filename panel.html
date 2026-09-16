@@ -29,6 +29,7 @@
 
     <!-- Giriş Ekranı -->
     <section id="loginView" class="panel-card login-card">
+      <div class="panel-icon-badge">🔌</div>
       <h1>Cihaza Bağlan</h1>
       <p class="panel-sub">MQTT (HiveMQ Cloud) bilgilerinizle giriş yapın. Şifreniz kaydedilmez, her girişte yeniden istenir.</p>
 
@@ -95,7 +96,7 @@
         </div>
       </div>
 
-      <div class="drive-state-row">
+      <div class="drive-state-row" id="driveStateRow">
         <span id="driveStateDot" class="drive-state-dot"></span>
         <span id="driveStateText">Durum bilinmiyor</span>
       </div>
@@ -108,20 +109,32 @@
       </div>
 
       <div class="telemetry-grid">
-        <div class="tele-card">
-          <span class="tele-label">Frekans</span>
+        <div class="tele-card freq">
+          <div class="tele-head">
+            <span class="tele-icon">📊</span>
+            <span class="tele-label">Frekans</span>
+          </div>
           <span class="tele-value" id="teleFreq">—</span>
         </div>
-        <div class="tele-card">
-          <span class="tele-label">Çıkış Akımı</span>
+        <div class="tele-card current">
+          <div class="tele-head">
+            <span class="tele-icon">⚡</span>
+            <span class="tele-label">Çıkış Akımı</span>
+          </div>
           <span class="tele-value" id="teleCurrent">—</span>
         </div>
-        <div class="tele-card">
-          <span class="tele-label">Çıkış Gerilimi</span>
+        <div class="tele-card voltage">
+          <div class="tele-head">
+            <span class="tele-icon">🔌</span>
+            <span class="tele-label">Çıkış Gerilimi</span>
+          </div>
           <span class="tele-value" id="teleVoltage">—</span>
         </div>
-        <div class="tele-card">
-          <span class="tele-label">Motor Hızı</span>
+        <div class="tele-card speed">
+          <div class="tele-head">
+            <span class="tele-icon">🌀</span>
+            <span class="tele-label">Motor Hızı</span>
+          </div>
           <span class="tele-value" id="teleSpeed">—</span>
         </div>
       </div>

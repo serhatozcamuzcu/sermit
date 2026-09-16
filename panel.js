@@ -101,6 +101,7 @@ const disconnectBtn = document.getElementById('disconnectBtn');
 const faultBanner = document.getElementById('faultBanner');
 const faultTitle = document.getElementById('faultTitle');
 const faultDesc = document.getElementById('faultDesc');
+const driveStateRow = document.getElementById('driveStateRow');
 const driveStateDot = document.getElementById('driveStateDot');
 const driveStateText = document.getElementById('driveStateText');
 
@@ -165,16 +166,20 @@ function applyStatusPayload(data) {
 
   const state = data.state;
   if (state === 'FORWARD') {
-    driveStateDot.className = 'drive-state-dot running';
+    driveStateRow.className = 'drive-state-row running';
+    driveStateDot.textContent = '▶';
     driveStateText.textContent = 'Çalışıyor (İleri)';
   } else if (state === 'REVERSE') {
-    driveStateDot.className = 'drive-state-dot running';
+    driveStateRow.className = 'drive-state-row running';
+    driveStateDot.textContent = '▶';
     driveStateText.textContent = 'Çalışıyor (Geri)';
   } else if (state === 'STOPPED') {
-    driveStateDot.className = 'drive-state-dot stopped';
+    driveStateRow.className = 'drive-state-row stopped';
+    driveStateDot.textContent = '■';
     driveStateText.textContent = 'Durdu';
   } else {
-    driveStateDot.className = 'drive-state-dot';
+    driveStateRow.className = 'drive-state-row';
+    driveStateDot.textContent = '•';
     driveStateText.textContent = 'Durum bilinmiyor';
   }
 
