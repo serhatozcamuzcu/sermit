@@ -123,55 +123,81 @@
 
 .meta-actions { display: flex; gap: 18px; }
 
-.channels { display: grid; gap: 14px; margin-bottom: 24px; }
+/* Fault banner */
+.fault-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 20px;
+}
+.fault-icon { font-size: 22px; }
+.fault-banner strong { color: #b91c1c; display: block; margin-bottom: 4px; }
+.fault-banner p { margin: 0; color: #7f1d1d; font-size: 14px; }
 
-.channel-row {
+/* Drive state */
+.drive-state-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 18px 20px;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--navy);
+  margin-bottom: 24px;
+}
+.drive-state-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #cbd5e1;
+  flex-shrink: 0;
+}
+.drive-state-dot.running { background: #22c55e; box-shadow: 0 0 0 5px rgba(34,197,94,0.15); }
+.drive-state-dot.stopped { background: #94a3b8; }
+
+/* Control buttons */
+.control-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.btn-drive {
+  justify-content: center;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 15px;
+}
+.btn-start { background: #22c55e; color: #fff; }
+.btn-start:hover { background: #16a34a; }
+.btn-reverse { background: #f59e0b; color: #fff; }
+.btn-reverse:hover { background: #d97706; }
+.btn-stop { background: #dc2626; color: #fff; }
+.btn-stop:hover { background: #b91c1c; }
+.btn-reset { background: #fff; color: var(--navy); border: 2px solid #cbd5e1; }
+.btn-reset:hover { background: #f1f5f9; }
+
+/* Telemetry */
+.telemetry-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.tele-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 18px;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
   background: #f8fafc;
 }
-
-.channel-info { display: flex; flex-direction: column; gap: 4px; }
-.channel-name { font-weight: 700; font-size: 16px; color: var(--navy); }
-.channel-state { font-size: 13px; color: #64748b; }
-.channel-state.on { color: #16a34a; font-weight: 600; }
-.channel-state.off { color: #64748b; }
-
-.toggle {
-  position: relative;
-  width: 56px;
-  height: 32px;
-  flex-shrink: 0;
-}
-.toggle input { opacity: 0; width: 0; height: 0; }
-.toggle-slider {
-  position: absolute;
-  inset: 0;
-  background: #cbd5e1;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: background .2s;
-}
-.toggle-slider::before {
-  content: "";
-  position: absolute;
-  width: 24px;
-  height: 24px;
-  left: 4px;
-  top: 4px;
-  background: #fff;
-  border-radius: 50%;
-  transition: transform .2s;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-.toggle input:checked + .toggle-slider { background: #22c55e; }
-.toggle input:checked + .toggle-slider::before { transform: translateX(24px); }
-.toggle input:disabled + .toggle-slider { opacity: 0.5; cursor: not-allowed; }
+.tele-label { font-size: 13px; color: #64748b; font-weight: 600; }
+.tele-value { font-size: 22px; font-weight: 800; color: var(--navy); }
 
 .raw-panel { border-top: 1px solid #e2e8f0; padding-top: 18px; }
 .raw-data {
@@ -186,58 +212,9 @@
   word-break: break-all;
 }
 
-/* Settings modal */
-.modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(15,23,42,0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  z-index: 300;
-}
-.modal-box {
-  background: #fff;
-  border-radius: var(--radius);
-  padding: 28px;
-  max-width: 480px;
-  width: 100%;
-  max-height: 85vh;
-  overflow-y: auto;
-}
-.modal-box h2 { margin: 0 0 8px; font-size: 20px; }
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.channel-setting-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr auto;
-  gap: 8px;
-  margin-bottom: 10px;
-  align-items: center;
-}
-.channel-setting-row input {
-  font-family: inherit;
-  font-size: 14px;
-  padding: 8px 10px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-}
-.channel-setting-row button {
-  background: none;
-  border: none;
-  color: #dc2626;
-  font-size: 18px;
-  cursor: pointer;
-  padding: 4px 8px;
-}
-
 @media (max-width: 520px) {
   .panel-card { padding: 26px 20px; }
   .panel-header-title { display: none; }
+  .control-buttons { grid-template-columns: 1fr; }
+  .telemetry-grid { grid-template-columns: 1fr; }
 }

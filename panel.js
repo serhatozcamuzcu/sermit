@@ -1,27 +1,65 @@
 const SETTINGS_KEY = 'novagenPanelSettings';
 
-const DEFAULT_CHANNELS = [
-  { key: 'CIKIS1', label: 'Çıkış 1' },
-  { key: 'CIKIS2', label: 'Çıkış 2' },
-  { key: 'CIKIS3', label: 'Çıkış 3' },
-  { key: 'CIKIS4', label: 'Çıkış 4' },
-];
+const DEFAULTS = {
+  brokerHost: '',
+  deviceId: '',
+  mqttUser: '',
+  cmdTopicTpl: 'cihaz/{deviceId}/komut',
+  statusTopicTpl: 'cihaz/{deviceId}/durum',
+};
+
+// İnovance AC sürücü hata kodları (kılavuz s.65-66, register 8000 - "AC drive fault description")
+const FAULT_CODES = {
+  '0000': 'Hata yok',
+  '0001': 'Rezerve',
+  '0002': 'Hızlanırken aşırı akım',
+  '0003': 'Yavaşlarken aşırı akım',
+  '0004': 'Sabit hızda aşırı akım',
+  '0005': 'Hızlanırken aşırı gerilim',
+  '0006': 'Yavaşlarken aşırı gerilim',
+  '0007': 'Sabit hızda aşırı gerilim',
+  '0008': 'Ön şarj direnci aşırı yüklenmesi',
+  '0009': 'Düşük gerilim (undervoltage)',
+  '000A': 'Sürücü aşırı yüklenmesi',
+  '000B': 'Motor aşırı yüklenmesi',
+  '000C': 'Giriş faz kaybı',
+  '000D': 'Çıkış faz kaybı',
+  '000E': 'IGBT aşırı ısınma',
+  '000F': 'Harici hata',
+  '0010': 'Haberleşme hatası (anormal)',
+  '0012': 'Akım algılama hatası',
+  '0013': 'Motor oto ayar (auto-tuning) hatası',
+  '0015': 'Parametre okuma/yazma hatası',
+  '0017': 'Motor gövdeye kısa devre',
+  '001A': 'Çalışma süresi doldu',
+  '001B': 'Kullanıcı tanımlı hata 1',
+  '001C': 'Kullanıcı tanımlı hata 2',
+  '001D': 'Açık kalma süresi doldu',
+  '001E': 'Yük kaybı',
+  '001F': 'PID geri besleme kaybı (çalışırken)',
+  '0028': 'Hızlı akım sınırlama zaman aşımı',
+  '0037': 'Hız senkronizasyonunda slave hatası',
+};
+
+function faultDescription(code) {
+  const key = String(code).toUpperCase().padStart(4, '0');
+  return FAULT_CODES[key] || `Bilinmeyen hata kodu (${key})`;
+}
 
 function loadSettings() {
   try {
     const raw = localStorage.getItem(SETTINGS_KEY);
-    if (!raw) return { brokerHost: '', deviceId: '', mqttUser: '', channels: DEFAULT_CHANNELS };
+    if (!raw) return { ...DEFAULTS };
     const parsed = JSON.parse(raw);
     return {
       brokerHost: parsed.brokerHost || '',
       deviceId: parsed.deviceId || '',
       mqttUser: parsed.mqttUser || '',
-      cmdTopicTpl: parsed.cmdTopicTpl || 'cihaz/{deviceId}/komut',
-      statusTopicTpl: parsed.statusTopicTpl || 'cihaz/{deviceId}/durum',
-      channels: Array.isArray(parsed.channels) && parsed.channels.length ? parsed.channels : DEFAULT_CHANNELS,
+      cmdTopicTpl: parsed.cmdTopicTpl || DEFAULTS.cmdTopicTpl,
+      statusTopicTpl: parsed.statusTopicTpl || DEFAULTS.statusTopicTpl,
     };
   } catch {
-    return { brokerHost: '', deviceId: '', mqttUser: '', channels: DEFAULT_CHANNELS };
+    return { ...DEFAULTS };
   }
 }
 
@@ -37,7 +75,6 @@ let settings = loadSettings();
 let client = null;
 let cmdTopic = '';
 let statusTopic = '';
-let channelStates = {};
 
 const loginView = document.getElementById('loginView');
 const dashboardView = document.getElementById('dashboardView');
@@ -57,17 +94,25 @@ const statusDot = document.getElementById('statusDot');
 const statusText = document.getElementById('statusText');
 const deviceLabel = document.getElementById('deviceLabel');
 const lastUpdate = document.getElementById('lastUpdate');
-const channelsEl = document.getElementById('channels');
 const rawToggle = document.getElementById('rawToggle');
 const rawData = document.getElementById('rawData');
 const disconnectBtn = document.getElementById('disconnectBtn');
 
-const settingsBtn = document.getElementById('settingsBtn');
-const settingsModal = document.getElementById('settingsModal');
-const channelSettingsEl = document.getElementById('channelSettings');
-const addChannelBtn = document.getElementById('addChannelBtn');
-const closeSettingsBtn = document.getElementById('closeSettingsBtn');
-const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+const faultBanner = document.getElementById('faultBanner');
+const faultTitle = document.getElementById('faultTitle');
+const faultDesc = document.getElementById('faultDesc');
+const driveStateDot = document.getElementById('driveStateDot');
+const driveStateText = document.getElementById('driveStateText');
+
+const startBtn = document.getElementById('startBtn');
+const reverseBtn = document.getElementById('reverseBtn');
+const stopBtn = document.getElementById('stopBtn');
+const resetFaultBtn = document.getElementById('resetFaultBtn');
+
+const teleFreq = document.getElementById('teleFreq');
+const teleCurrent = document.getElementById('teleCurrent');
+const teleVoltage = document.getElementById('teleVoltage');
+const teleSpeed = document.getElementById('teleSpeed');
 
 if (settings.brokerHost) brokerHostInput.value = settings.brokerHost;
 if (settings.deviceId) deviceIdInput.value = settings.deviceId;
@@ -92,65 +137,60 @@ function setStatus(state, text) {
   statusText.textContent = text;
 }
 
-function renderChannels() {
-  channelsEl.innerHTML = '';
-  settings.channels.forEach((ch) => {
-    const row = document.createElement('div');
-    row.className = 'channel-row';
-
-    const info = document.createElement('div');
-    info.className = 'channel-info';
-    const name = document.createElement('span');
-    name.className = 'channel-name';
-    name.textContent = ch.label;
-    const state = document.createElement('span');
-    state.className = 'channel-state off';
-    state.id = `state-${ch.key}`;
-    state.textContent = 'Durum bilinmiyor';
-    info.appendChild(name);
-    info.appendChild(state);
-
-    const toggle = document.createElement('label');
-    toggle.className = 'toggle';
-    const input = document.createElement('input');
-    input.type = 'checkbox';
-    input.id = `toggle-${ch.key}`;
-    input.addEventListener('change', () => {
-      publishCommand(ch.key, input.checked ? 'AC' : 'KAPA');
-    });
-    const slider = document.createElement('span');
-    slider.className = 'toggle-slider';
-    toggle.appendChild(input);
-    toggle.appendChild(slider);
-
-    row.appendChild(info);
-    row.appendChild(toggle);
-    channelsEl.appendChild(row);
-  });
-}
-
-function publishCommand(channelKey, state) {
+function publishCommand(cmd) {
   if (!client || !client.connected) return;
-  const payload = JSON.stringify({ channel: channelKey, state });
-  client.publish(cmdTopic, payload, { qos: 1 });
+  client.publish(cmdTopic, JSON.stringify({ cmd }), { qos: 1 });
 }
 
+startBtn.addEventListener('click', () => {
+  if (confirm('Sürücüyü ileri yönde çalıştırmak istediğinize emin misiniz?')) {
+    publishCommand('START');
+  }
+});
+reverseBtn.addEventListener('click', () => {
+  if (confirm('Sürücüyü ters yönde çalıştırmak istediğinize emin misiniz?')) {
+    publishCommand('REVERSE');
+  }
+});
+stopBtn.addEventListener('click', () => publishCommand('STOP'));
+resetFaultBtn.addEventListener('click', () => publishCommand('FAULT_RESET'));
+
+// Beklenen durum (status) JSON alanları — ESP32 firmware bunları yayınlamalı:
+// { "state": "FORWARD"|"REVERSE"|"STOPPED", "fault_code": "0000",
+//   "freq_hz": 42.5, "current_a": 3.2, "voltage_v": 380, "speed_rpm": 1450 }
+// Değerler ESP32 tarafında register ölçek katsayılarıyla (örn. frekans /100) çevrilmiş olarak gönderilmelidir.
 function applyStatusPayload(data) {
   rawData.textContent = JSON.stringify(data, null, 2);
   lastUpdate.textContent = 'Son veri: ' + new Date().toLocaleTimeString('tr-TR');
 
-  settings.channels.forEach((ch) => {
-    const val = data[ch.key];
-    if (val === undefined) return;
-    const isOn = val === true || val === 'AC' || val === 'ON' || val === 1;
-    const toggleInput = document.getElementById(`toggle-${ch.key}`);
-    const stateLabel = document.getElementById(`state-${ch.key}`);
-    if (toggleInput) toggleInput.checked = isOn;
-    if (stateLabel) {
-      stateLabel.textContent = isOn ? 'Açık' : 'Kapalı';
-      stateLabel.className = 'channel-state ' + (isOn ? 'on' : 'off');
-    }
-  });
+  const state = data.state;
+  if (state === 'FORWARD') {
+    driveStateDot.className = 'drive-state-dot running';
+    driveStateText.textContent = 'Çalışıyor (İleri)';
+  } else if (state === 'REVERSE') {
+    driveStateDot.className = 'drive-state-dot running';
+    driveStateText.textContent = 'Çalışıyor (Geri)';
+  } else if (state === 'STOPPED') {
+    driveStateDot.className = 'drive-state-dot stopped';
+    driveStateText.textContent = 'Durdu';
+  } else {
+    driveStateDot.className = 'drive-state-dot';
+    driveStateText.textContent = 'Durum bilinmiyor';
+  }
+
+  const faultCode = data.fault_code;
+  if (faultCode !== undefined && faultCode !== null && String(faultCode).toUpperCase() !== '0000') {
+    faultTitle.textContent = `Hata (${String(faultCode).toUpperCase()})`;
+    faultDesc.textContent = faultDescription(faultCode);
+    faultBanner.classList.remove('hidden');
+  } else {
+    faultBanner.classList.add('hidden');
+  }
+
+  teleFreq.textContent = data.freq_hz !== undefined ? `${data.freq_hz} Hz` : '—';
+  teleCurrent.textContent = data.current_a !== undefined ? `${data.current_a} A` : '—';
+  teleVoltage.textContent = data.voltage_v !== undefined ? `${data.voltage_v} V` : '—';
+  teleSpeed.textContent = data.speed_rpm !== undefined ? `${data.speed_rpm} RPM` : '—';
 }
 
 function connect(brokerHost, deviceId, user, pass, cmdTpl, statusTpl) {
@@ -192,7 +232,6 @@ function connect(brokerHost, deviceId, user, pass, cmdTpl, statusTpl) {
     deviceLabel.textContent = `Cihaz: ${deviceId}`;
     loginView.classList.add('hidden');
     dashboardView.classList.remove('hidden');
-    renderChannels();
     setStatus('online', 'Bağlı');
     connectBtn.disabled = false;
     connectBtn.textContent = 'Bağlan';
@@ -232,8 +271,8 @@ loginForm.addEventListener('submit', (e) => {
     deviceIdInput.value.trim(),
     mqttUserInput.value,
     mqttPassInput.value,
-    cmdTopicTplInput.value.trim() || 'cihaz/{deviceId}/komut',
-    statusTopicTplInput.value.trim() || 'cihaz/{deviceId}/durum'
+    cmdTopicTplInput.value.trim() || DEFAULTS.cmdTopicTpl,
+    statusTopicTplInput.value.trim() || DEFAULTS.statusTopicTpl
   );
 });
 
@@ -243,56 +282,4 @@ disconnectBtn.addEventListener('click', () => {
   dashboardView.classList.add('hidden');
   loginView.classList.remove('hidden');
   setStatus('offline', 'Bağlanıyor…');
-});
-
-// Settings modal — channel labels/keys
-function openSettingsModal() {
-  channelSettingsEl.innerHTML = '';
-  settings.channels.forEach((ch, i) => addChannelSettingRow(ch.label, ch.key, i));
-  settingsModal.classList.remove('hidden');
-}
-
-function addChannelSettingRow(label = '', key = '', index) {
-  const row = document.createElement('div');
-  row.className = 'channel-setting-row';
-
-  const labelInput = document.createElement('input');
-  labelInput.placeholder = 'Etiket (ör. Motor)';
-  labelInput.value = label;
-  labelInput.dataset.field = 'label';
-
-  const keyInput = document.createElement('input');
-  keyInput.placeholder = 'MQTT anahtarı (ör. CIKIS1)';
-  keyInput.value = key;
-  keyInput.dataset.field = 'key';
-
-  const removeBtn = document.createElement('button');
-  removeBtn.type = 'button';
-  removeBtn.textContent = '✕';
-  removeBtn.addEventListener('click', () => row.remove());
-
-  row.appendChild(labelInput);
-  row.appendChild(keyInput);
-  row.appendChild(removeBtn);
-  channelSettingsEl.appendChild(row);
-}
-
-settingsBtn.addEventListener('click', openSettingsModal);
-closeSettingsBtn.addEventListener('click', () => settingsModal.classList.add('hidden'));
-addChannelBtn.addEventListener('click', () => addChannelSettingRow());
-
-saveSettingsBtn.addEventListener('click', () => {
-  const rows = channelSettingsEl.querySelectorAll('.channel-setting-row');
-  const newChannels = [];
-  rows.forEach((row) => {
-    const label = row.querySelector('[data-field="label"]').value.trim();
-    const key = row.querySelector('[data-field="key"]').value.trim();
-    if (label && key) newChannels.push({ label, key });
-  });
-  if (newChannels.length) {
-    settings.channels = newChannels;
-    saveSettings(settings);
-    renderChannels();
-  }
-  settingsModal.classList.add('hidden');
 });
