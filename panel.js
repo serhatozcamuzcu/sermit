@@ -69,9 +69,9 @@ const addChannelBtn = document.getElementById('addChannelBtn');
 const closeSettingsBtn = document.getElementById('closeSettingsBtn');
 const saveSettingsBtn = document.getElementById('saveSettingsBtn');
 
-brokerHostInput.value = settings.brokerHost;
-deviceIdInput.value = settings.deviceId;
-mqttUserInput.value = settings.mqttUser;
+if (settings.brokerHost) brokerHostInput.value = settings.brokerHost;
+if (settings.deviceId) deviceIdInput.value = settings.deviceId;
+if (settings.mqttUser) mqttUserInput.value = settings.mqttUser;
 if (settings.cmdTopicTpl) cmdTopicTplInput.value = settings.cmdTopicTpl;
 if (settings.statusTopicTpl) statusTopicTplInput.value = settings.statusTopicTpl;
 
