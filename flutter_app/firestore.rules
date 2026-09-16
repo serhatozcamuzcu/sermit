@@ -1,0 +1,28 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /hesaplar/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+
+      match /cihazlar/{cihazId} {
+        allow read, delete, update: if request.auth != null && request.auth.uid == uid;
+
+        allow create: if request.auth != null
+          && request.auth.uid == uid
+          && request.resource.data.anahtar ==
+             get(/databases/$(database)/documents/mqtt_kimlik_bilgileri/$(cihazId)).data.pairingKey;
+      }
+
+      match /cihazlar/{cihazId}/arizalar/{arizaId} {
+        allow read, write: if request.auth != null && request.auth.uid == uid;
+      }
+    }
+
+    match /mqtt_kimlik_bilgileri/{cihazId} {
+      allow read: if request.auth != null &&
+        exists(/databases/$(database)/documents/hesaplar/$(request.auth.uid)/cihazlar/$(cihazId));
+      allow write: if false;
+    }
+  }
+}
