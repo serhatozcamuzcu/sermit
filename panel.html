@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kontrol Paneli | Novagen Mühendislik</title>
+<meta name="description" content="Novagen Mühendislik uzaktan kontrol paneli — MQTT üzerinden GSM kontrol modülünüzü yönetin.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%23f5a623'/%3E%3Cpath d='M13 2 4 14h6l-1 8 9-12h-6z' fill='%230f172a'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="panel.css">
+</head>
+<body class="panel-body">
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="index.html" class="brand">
+      <img src="images/logo.png" alt="Novagen Mühendislik" class="brand-logo">
+    </a>
+    <span class="panel-header-title">Kontrol Paneli</span>
+    <a href="index.html" class="btn btn-outline btn-small panel-back">← Siteye Dön</a>
+  </div>
+</header>
+
+<main class="panel-main">
+  <div class="container panel-container">
+
+    <!-- Giriş Ekranı -->
+    <section id="loginView" class="panel-card login-card">
+      <h1>Cihaza Bağlan</h1>
+      <p class="panel-sub">MQTT (HiveMQ Cloud) bilgilerinizle giriş yapın. Şifreniz kaydedilmez, her girişte yeniden istenir.</p>
+
+      <form id="loginForm" class="panel-form">
+        <label>
+          Broker Adresi
+          <input type="text" id="brokerHost" placeholder="xxxxx.s1.eu.hivemq.cloud" required autocomplete="off">
+        </label>
+        <label>
+          Cihaz Kimliği (Device ID)
+          <input type="text" id="deviceId" placeholder="ornek-cihaz-01" required autocomplete="off">
+        </label>
+        <label>
+          MQTT Kullanıcı Adı
+          <input type="text" id="mqttUser" placeholder="Serhat" required autocomplete="off">
+        </label>
+        <label>
+          MQTT Şifre
+          <input type="password" id="mqttPass" placeholder="••••••••" required autocomplete="off">
+        </label>
+
+        <button type="button" id="advancedToggle" class="link-btn">Gelişmiş ayarlar (konu/topic yapısı) ▾</button>
+
+        <div id="advancedFields" class="advanced-fields hidden">
+          <label>
+            Komut Konusu Şablonu
+            <input type="text" id="cmdTopicTpl" value="cihaz/{deviceId}/komut">
+          </label>
+          <label>
+            Durum Konusu Şablonu
+            <input type="text" id="statusTopicTpl" value="cihaz/{deviceId}/durum">
+          </label>
+          <p class="hint">{deviceId} otomatik olarak yukarıdaki Cihaz Kimliği ile değiştirilir. Firmware'inizdeki gerçek konu isimleriyle eşleştirin.</p>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="connectBtn">Bağlan</button>
+        <p id="loginError" class="error-msg hidden"></p>
+      </form>
+    </section>
+
+    <!-- Panel Ekranı -->
+    <section id="dashboardView" class="panel-card hidden">
+      <div class="dash-header">
+        <div>
+          <h1>Cihaz Kontrolü</h1>
+          <p class="panel-sub" id="deviceLabel">—</p>
+        </div>
+        <div class="dash-status">
+          <span id="statusDot" class="status-dot offline"></span>
+          <span id="statusText">Bağlanıyor…</span>
+        </div>
+      </div>
+
+      <div class="meta-row">
+        <span id="lastUpdate">Son veri: —</span>
+        <div class="meta-actions">
+          <button id="settingsBtn" class="link-btn">Ayarlar</button>
+          <button id="disconnectBtn" class="link-btn danger">Bağlantıyı Kes</button>
+        </div>
+      </div>
+
+      <div id="channels" class="channels"></div>
+
+      <div class="raw-panel">
+        <button id="rawToggle" class="link-btn">Ham veriyi göster ▾</button>
+        <pre id="rawData" class="raw-data hidden">—</pre>
+      </div>
+    </section>
+
+    <!-- Ayarlar Modalı -->
+    <div id="settingsModal" class="modal hidden">
+      <div class="modal-box">
+        <h2>Çıkış Ayarları</h2>
+        <p class="hint">Panelde görünen çıkış sayısı, etiketleri ve MQTT anahtarlarını burada düzenleyebilirsiniz.</p>
+        <div id="channelSettings"></div>
+        <button id="addChannelBtn" class="link-btn">+ Çıkış ekle</button>
+        <div class="modal-actions">
+          <button id="closeSettingsBtn" class="btn btn-outline btn-small">İptal</button>
+          <button id="saveSettingsBtn" class="btn btn-primary btn-small">Kaydet</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/mqtt@5.10.1/dist/mqtt.min.js"></script>
+<script src="panel.js"></script>
+</body>
+</html>
