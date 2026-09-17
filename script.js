@@ -35,3 +35,57 @@ lightbox.addEventListener('click', (e) => {
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeLightbox();
 });
+
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const explodeScenes = Array.from(document.querySelectorAll('.explode-scene')).map((scene) => ({
+  el: scene,
+  caption: scene.querySelector('.explode-caption'),
+  parts: Array.from(scene.querySelectorAll('.part')).map((part) => ({
+    el: part,
+    tx: parseFloat(part.dataset.tx || '0'),
+    ty: parseFloat(part.dataset.ty || '0'),
+    rot: parseFloat(part.dataset.rot || '0'),
+  })),
+}));
+
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value));
+}
+
+function updateExplode() {
+  const vh = window.innerHeight;
+  explodeScenes.forEach(({ el, parts, caption }) => {
+    const rect = el.getBoundingClientRect();
+    const total = rect.height - vh;
+    const progress = total <= 0 ? 0 : clamp(-rect.top / total, 0, 1);
+    parts.forEach(({ el: partEl, tx, ty, rot }) => {
+      partEl.style.transform = `translate(${tx * progress}%, ${ty * progress}%) rotate(${rot * progress}deg)`;
+    });
+    if (caption) caption.style.opacity = String(clamp(progress * 2.5, 0, 1));
+  });
+}
+
+if (explodeScenes.length) {
+  if (reduceMotion) {
+    explodeScenes.forEach(({ parts, caption }) => {
+      parts.forEach(({ el: partEl, tx, ty, rot }) => {
+        partEl.style.transform = `translate(${tx * 0.6}%, ${ty * 0.6}%) rotate(${rot * 0.6}deg)`;
+      });
+      if (caption) caption.style.opacity = '1';
+    });
+  } else {
+    let ticking = false;
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(() => {
+          updateExplode();
+          ticking = false;
+        });
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    updateExplode();
+  }
+}
