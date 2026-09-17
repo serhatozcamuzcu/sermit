@@ -104,10 +104,8 @@ img { max-width: 100%; display: block; }
 .brand-text span { font-weight: 500; font-size: 11px; color: var(--amber); letter-spacing: 2px; }
 
 .brand-logo {
-  height: 42px;
-  border-radius: 6px;
-  background: #fff;
-  padding: 4px 8px;
+  height: 46px;
+  width: auto;
 }
 
 .nav {
