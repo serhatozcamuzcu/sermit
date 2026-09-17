@@ -1,12 +1,17 @@
+/* Bu panel, sitenin kendi marka renklerini (styles.css içindeki --navy,
+   --amber, --amber-dark) kullanır — otomasyon/endüstriyel kimliğe daha
+   uygun olsun diye ayrı bir mor/indigo palet yerine bunlar tercih edildi.
+   Burada sadece "soft" (pastel) tonları ve panel'e özgü bileşenler var. */
 :root {
-  --ind: #4f46e5;
-  --ind-dark: #4338ca;
-  --ind-soft: #eef2ff;
-  --ind-soft-text: #4338ca;
-  --panel-bg-1: #f6f5fc;
-  --panel-bg-2: #f0edfb;
+  --panel-navy-soft: #eef2f7;
+  --panel-navy-soft-text: #334155;
+  --panel-amber-soft: #fff4e0;
+  --panel-teal-soft: #e3f6f5;
+  --panel-teal: #0f9488;
+  --panel-bg-1: #f6f7f9;
+  --panel-bg-2: #eef1f4;
   --panel-radius: 22px;
-  --panel-shadow: 0 16px 40px rgba(79, 70, 229, 0.12);
+  --panel-shadow: 0 16px 36px rgba(15, 23, 42, 0.09);
 }
 
 .panel-body {
@@ -40,7 +45,7 @@
   width: 56px;
   height: 56px;
   border-radius: 16px;
-  background: var(--ind-soft);
+  background: var(--panel-navy-soft);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -48,8 +53,8 @@
   margin-bottom: 18px;
 }
 
-.panel-card h1 { margin: 0 0 8px; font-size: 24px; color: #1e1b4b; }
-.panel-sub { margin: 0 0 28px; color: #6b7280; font-size: 15px; }
+.panel-card h1 { margin: 0 0 8px; font-size: 24px; color: var(--navy); }
+.panel-sub { margin: 0 0 28px; color: #64748b; font-size: 15px; }
 
 .panel-form { display: grid; gap: 18px; }
 .panel-form label {
@@ -57,46 +62,46 @@
   gap: 6px;
   font-weight: 600;
   font-size: 14px;
-  color: #312e81;
+  color: var(--navy);
 }
 .panel-form input {
   font-family: inherit;
   font-size: 15px;
   padding: 13px 16px;
-  border: 1.5px solid #e5e3f7;
-  background: #faf9fe;
+  border: 1.5px solid #e6e9ee;
+  background: #fafbfc;
   border-radius: 14px;
   font-weight: 400;
-  transition: border-color .15s, background .15s;
+  transition: border-color .15s, background .15s, box-shadow .15s;
 }
 .panel-form input:focus {
   outline: none;
-  border-color: var(--ind);
+  border-color: var(--amber);
   background: #fff;
-  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
+  box-shadow: 0 0 0 4px rgba(245, 166, 35, 0.16);
 }
 
 .panel-form .btn { justify-content: center; margin-top: 6px; }
 
 .panel-body .btn-primary {
-  background: linear-gradient(135deg, var(--ind), var(--ind-dark));
-  color: #fff;
+  background: linear-gradient(135deg, var(--amber), var(--amber-dark));
+  color: var(--navy);
   border-radius: 14px;
   padding: 15px 24px;
   font-weight: 700;
   letter-spacing: .3px;
-  box-shadow: 0 10px 24px rgba(79, 70, 229, 0.32);
+  box-shadow: 0 10px 22px rgba(217, 140, 15, 0.32);
   border: none;
 }
 .panel-body .btn-primary:hover {
-  background: linear-gradient(135deg, var(--ind-dark), var(--ind-dark));
-  box-shadow: 0 12px 28px rgba(79, 70, 229, 0.4);
+  background: linear-gradient(135deg, var(--amber-dark), var(--amber-dark));
+  box-shadow: 0 12px 26px rgba(217, 140, 15, 0.4);
 }
 
 .link-btn {
   background: none;
   border: none;
-  color: var(--ind);
+  color: var(--amber-dark);
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
@@ -109,12 +114,12 @@
   display: grid;
   gap: 14px;
   padding: 16px;
-  background: var(--ind-soft);
+  background: var(--panel-navy-soft);
   border-radius: 14px;
   border: none;
 }
 
-.hint { font-size: 13px; color: #9691b8; margin: 0; font-weight: 400; }
+.hint { font-size: 13px; color: #94a3b8; margin: 0; font-weight: 400; }
 
 .error-msg {
   color: #dc2626;
@@ -143,8 +148,8 @@
   white-space: nowrap;
   padding: 8px 16px;
   border-radius: 999px;
-  background: var(--ind-soft);
-  color: var(--ind-soft-text);
+  background: var(--panel-navy-soft);
+  color: var(--panel-navy-soft-text);
 }
 
 .status-dot {
@@ -165,9 +170,9 @@
   gap: 10px;
   margin-bottom: 28px;
   padding-bottom: 20px;
-  border-bottom: 1px solid #efedfa;
+  border-bottom: 1px solid #eef1f4;
   font-size: 13px;
-  color: #9691b8;
+  color: #94a3b8;
 }
 
 .meta-actions { display: flex; gap: 18px; }
@@ -177,8 +182,8 @@
   display: flex;
   align-items: flex-start;
   gap: 14px;
-  background: rgba(220, 38, 38, 0.08);
-  border: 1.5px solid rgba(220, 38, 38, 0.35);
+  background: rgba(220, 38, 38, 0.07);
+  border: 1.5px solid rgba(220, 38, 38, 0.3);
   border-radius: 16px;
   padding: 16px 18px;
   margin-bottom: 20px;
@@ -187,7 +192,7 @@
 .fault-banner strong { color: #b91c1c; display: block; margin-bottom: 4px; }
 .fault-banner p { margin: 0; color: #7f1d1d; font-size: 14px; }
 
-/* Drive state — büyük renkli durum rozeti (BASLAT/DURDU ekranındaki gibi) */
+/* Drive state — büyük renkli durum rozeti */
 .drive-state-row {
   display: flex;
   align-items: center;
@@ -200,18 +205,18 @@
   padding: 16px;
   border-radius: 16px;
   margin-bottom: 24px;
-  background: #f4f3fb;
-  border: 1.5px solid #e5e3f7;
-  color: #6b7280;
+  background: var(--panel-navy-soft);
+  border: 1.5px solid #e2e8f0;
+  color: #64748b;
 }
 .drive-state-row.running {
-  background: rgba(34, 197, 94, 0.12);
-  border-color: rgba(34, 197, 94, 0.5);
+  background: rgba(34, 197, 94, 0.11);
+  border-color: rgba(34, 197, 94, 0.45);
   color: #15803d;
 }
 .drive-state-row.stopped {
-  background: rgba(220, 38, 38, 0.10);
-  border-color: rgba(220, 38, 38, 0.4);
+  background: rgba(220, 38, 38, 0.08);
+  border-color: rgba(220, 38, 38, 0.35);
   color: #b91c1c;
 }
 .drive-state-dot { font-size: 18px; line-height: 1; }
@@ -239,27 +244,28 @@
 .btn-start {
   background: linear-gradient(135deg, #22c55e, #16a34a);
   color: #fff;
-  box-shadow: 0 10px 22px rgba(34,197,94,0.32);
+  box-shadow: 0 10px 20px rgba(34,197,94,0.3);
 }
 .btn-stop {
   background: linear-gradient(135deg, #ef4444, #dc2626);
   color: #fff;
-  box-shadow: 0 10px 22px rgba(239,68,68,0.32);
+  box-shadow: 0 10px 20px rgba(239,68,68,0.3);
 }
 .btn-reverse {
   background: #fff;
-  color: var(--ind-dark);
-  border: 2px solid var(--ind-soft);
+  color: var(--navy);
+  border: 2px solid var(--panel-navy-soft);
 }
-.btn-reverse:hover { background: var(--ind-soft); }
+.btn-reverse:hover { background: var(--panel-navy-soft); }
 .btn-reset {
   background: #fff;
-  color: var(--ind-dark);
-  border: 2px solid var(--ind-soft);
+  color: var(--navy);
+  border: 2px solid var(--panel-navy-soft);
 }
-.btn-reset:hover { background: var(--ind-soft); }
+.btn-reset:hover { background: var(--panel-navy-soft); }
 
-/* Telemetry — Flutter uygulamasındaki ikon rozetli kartlarla aynı dil */
+/* Telemetry — ikon rozetli kartlar, markanın lacivert/amber + bir vurgu
+   rengi (teal) ile, "gökkuşağı" değil sakin/endüstriyel bir izlenim için */
 .telemetry-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -271,9 +277,9 @@
   flex-direction: column;
   gap: 10px;
   padding: 18px;
-  border: 1.5px solid #efedfa;
+  border: 1.5px solid #eef1f4;
   border-radius: 16px;
-  background: #fbfaff;
+  background: #fafbfc;
 }
 .tele-head { display: flex; align-items: center; gap: 8px; }
 .tele-icon {
@@ -286,18 +292,18 @@
   font-size: 15px;
   flex-shrink: 0;
 }
-.tele-card.freq .tele-icon { background: rgba(79,70,229,0.12); }
-.tele-card.current .tele-icon { background: rgba(245,158,11,0.15); }
-.tele-card.voltage .tele-icon { background: rgba(14,165,233,0.14); }
-.tele-card.speed .tele-icon { background: rgba(79,70,229,0.12); }
-.tele-label { font-size: 13px; color: #6b7280; font-weight: 600; }
-.tele-value { font-size: 22px; font-weight: 800; color: #1e1b4b; }
+.tele-card.freq .tele-icon { background: var(--panel-navy-soft); }
+.tele-card.current .tele-icon { background: var(--panel-amber-soft); }
+.tele-card.voltage .tele-icon { background: var(--panel-teal-soft); }
+.tele-card.speed .tele-icon { background: var(--panel-navy-soft); }
+.tele-label { font-size: 13px; color: #64748b; font-weight: 600; }
+.tele-value { font-size: 22px; font-weight: 800; color: var(--navy); }
 
-.raw-panel { border-top: 1px solid #efedfa; padding-top: 18px; }
+.raw-panel { border-top: 1px solid #eef1f4; padding-top: 18px; }
 .raw-data {
   margin-top: 12px;
-  background: #1e1b4b;
-  color: #c7d2fe;
+  background: var(--navy);
+  color: #cbd5e1;
   padding: 16px;
   border-radius: 14px;
   font-size: 13px;
