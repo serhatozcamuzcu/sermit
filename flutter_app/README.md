@@ -1,9 +1,13 @@
 # Motor Kontrol (Flutter)
 
 Novagen'in gerçek üretim uygulaması — Firebase Auth + Firestore + MQTT (HiveMQ Cloud) tabanlı
-çoklu cihaz motor/sürücü kontrol paneli. Bu klasör henüz **eksik bir proje iskeleti**: yalnızca
-`lib/main.dart` var. `pubspec.yaml`, Firestore Security Rules ve platform klasörleri (web/android/ios)
-eklendiğinde proje tam hale gelecek.
+çoklu cihaz motor/sürücü kontrol paneli. Bu klasör henüz **eksik bir proje iskeleti**:
+`lib/main.dart`, `pubspec.yaml` ve `firestore.rules` var, ama platform klasörleri (`web/`,
+`android/`, `ios/`) ve ESP32 firmware kodu henüz eklenmedi.
+
+Bağımlılıklar (`pubspec.yaml`): `mqtt_client ^10.7.0`, `cloud_firestore ^5.0.0`,
+`firebase_core ^3.6.0`, `firebase_auth ^5.3.1`. `lib/main.dart`'ta kullanılan tüm MQTT/Firebase
+API'leri bu sürümlerle uyumlu görünüyor (elle kontrol edildi, `flutter pub get` ile doğrulanamadı).
 
 ## Bu main.dart'ta yapılan düzeltmeler
 
