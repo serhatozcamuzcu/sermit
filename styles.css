@@ -27,8 +27,15 @@
   visibility: hidden;
   pointer-events: none;
 }
-.preloader-logo {
+.preloader-stage {
+  position: relative;
   width: min(58vw, 300px);
+}
+.preloader-logo {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: block;
   opacity: 0;
   filter: drop-shadow(0 0 30px rgba(56, 189, 248, 0.35));
 }
@@ -44,11 +51,96 @@
   42%  { opacity: 1; transform: scale(1); }
   100% { opacity: 1; transform: scale(1); }
 }
+
+/* Lightning strike burst — synced to the bright moment (~26%) of preloader-flicker */
+.strike-ambient {
+  position: absolute;
+  left: 50%;
+  top: 30%;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(125,211,252,0.35) 35%, rgba(125,211,252,0) 70%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.preloader.flicker .strike-ambient {
+  animation: strike-ambient 1.3s ease forwards;
+}
+@keyframes strike-ambient {
+  0%, 19%  { opacity: 0; transform: scale(1); }
+  25%      { opacity: 1; transform: scale(50); }
+  32%      { opacity: .5; transform: scale(70); }
+  42%      { opacity: 0; transform: scale(85); }
+  100%     { opacity: 0; }
+}
+
+.strike-flash {
+  position: absolute;
+  left: 50%;
+  top: 30%;
+  width: 100px;
+  height: 100px;
+  margin: -50px 0 0 -50px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(147,197,253,0.6) 40%, rgba(147,197,253,0) 70%);
+  opacity: 0;
+  transform: scale(0.2);
+  pointer-events: none;
+  z-index: 1;
+}
+.preloader.flicker .strike-flash {
+  animation: strike-flash 1.3s ease forwards;
+}
+@keyframes strike-flash {
+  0%, 19% { opacity: 0; transform: scale(0.2); }
+  25%     { opacity: 1; transform: scale(1.5); }
+  30%     { opacity: .8; transform: scale(1); }
+  38%     { opacity: 0; transform: scale(1.7); }
+  100%    { opacity: 0; }
+}
+
+.strike-rays {
+  position: absolute;
+  left: 50%;
+  top: 30%;
+  width: 0;
+  height: 0;
+  z-index: 1;
+}
+.strike-rays i {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+}
+.strike-rays i b {
+  display: block;
+  width: 3px;
+  height: 80px;
+  background: linear-gradient(to top, rgba(191,227,255,0.95), rgba(191,227,255,0));
+  transform-origin: 50% 0%;
+  transform: scaleY(0);
+  opacity: 0;
+}
+.preloader.flicker .strike-rays i b {
+  animation: strike-ray 1.3s ease forwards;
+}
+@keyframes strike-ray {
+  0%, 19% { opacity: 0; transform: scaleY(0); }
+  26%     { opacity: 1; transform: scaleY(1); }
+  40%     { opacity: 0; transform: scaleY(1.4); }
+  100%    { opacity: 0; }
+}
+
 body.preloading { overflow: hidden; }
 
 @media (prefers-reduced-motion: reduce) {
   .preloader-logo { opacity: 1; }
   .preloader.flicker .preloader-logo { animation: none; }
+  .strike-ambient, .strike-flash, .strike-rays i b { display: none; }
 }
 
 html { scroll-behavior: smooth; }
