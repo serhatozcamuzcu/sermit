@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Online Mağaza | Novagen Mühendislik - Jeneratör, Yedek Parça, GES</title>
+<meta name="description" content="Novagen Mühendislik online mağaza: jeneratör, jeneratör yedek parçaları, otomasyon panoları ve GES ürünleri. Kayseri / Kocasinan.">
+<link rel="canonical" href="https://novagenmuhendislik.com/magaza.html">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Online Mağaza | Novagen Mühendislik">
+<meta property="og:description" content="Jeneratör, yedek parça, otomasyon ve GES ürünleri — Novagen Mühendislik online mağaza.">
+<meta property="og:url" content="https://novagenmuhendislik.com/magaza.html">
+<meta property="og:image" content="https://novagenmuhendislik.com/images/logo-full.png">
+<meta property="og:locale" content="tr_TR">
+<link rel="icon" type="image/png" href="images/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="magaza.css">
+</head>
+<body class="shop">
+
+<div class="shop-topbar">
+  <div class="container topbar-inner">
+    <span>Kayseri içi teslimat ve montaj · Türkiye geneli kargo</span>
+    <div class="topbar-links">
+      <a href="tel:+905353073060">📞 0535 307 30 60</a>
+      <a href="https://wa.me/905353073060" target="_blank" rel="noopener">💬 WhatsApp</a>
+    </div>
+  </div>
+</div>
+
+<header class="shop-header">
+  <div class="container shop-header-inner">
+    <a href="index.html" class="brand">
+      <img src="images/logo-header.png" alt="Novagen Mühendislik" class="brand-logo">
+    </a>
+    <form class="shop-search" id="searchForm" role="search">
+      <input type="search" id="searchInput" placeholder="Ürün adı yazınız (ör. AVR, jeneratör, panel)" aria-label="Ürün ara">
+      <button type="submit" aria-label="Ara">🔍</button>
+    </form>
+    <button class="cart-button" id="cartButton" aria-label="Sepetim">
+      <span class="cart-icon">🛒<span class="cart-count" id="cartCount">0</span></span>
+      <span class="cart-label">Sepetim <strong id="cartTotalHeader">0,00 TL</strong></span>
+    </button>
+  </div>
+  <nav class="shop-nav">
+    <div class="container shop-nav-inner" id="categoryNav">
+      <a href="#urunler" data-kategori="hepsi" class="active">Tüm Ürünler</a>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <section class="shop-banner">
+    <div class="container shop-banner-inner">
+      <div>
+        <p class="eyebrow">Novagen Mühendislik Online Mağaza</p>
+        <h1>Jeneratör ve yedek parçada<br><span>7/24 online sipariş</span></h1>
+        <p class="hero-desc">Ürününüzü sepete ekleyin, siparişinizi oluşturun; ödeme ve teslimat için sizi hemen arayalım. Proje ürünlerinde ücretsiz keşif ve teklif.</p>
+        <a href="#urunler" class="btn btn-primary">Ürünleri İncele</a>
+      </div>
+      <img src="images/novagen-logo-jenerator.jpg" alt="Novagen jeneratör" class="shop-banner-photo">
+    </div>
+  </section>
+
+  <section class="section shop-section">
+    <div class="container">
+      <h2 class="shop-heading">Öne Çıkan Kategoriler</h2>
+      <p class="shop-subheading">Aradığınız ürün grubunu seçin.</p>
+      <div class="category-cards" id="categoryCards"></div>
+    </div>
+  </section>
+
+  <section class="section shop-section alt" id="urunler">
+    <div class="container">
+      <h2 class="shop-heading" id="productsTitle">Tüm Ürünler</h2>
+      <div class="product-toolbar">
+        <span id="productCount"></span>
+        <label>Sırala
+          <select id="sortSelect">
+            <option value="onerilen">Önerilen</option>
+            <option value="artan">Fiyat: Düşükten yükseğe</option>
+            <option value="azalan">Fiyat: Yüksekten düşüğe</option>
+          </select>
+        </label>
+      </div>
+      <div class="product-grid" id="productGrid"></div>
+      <p class="empty-note" id="emptyNote" hidden>Aradığınız ürünü bulamadık. <a href="https://wa.me/905353073060" target="_blank" rel="noopener">WhatsApp'tan sorun</a>, hemen tedarik edelim.</p>
+    </div>
+  </section>
+
+  <section class="section shop-section">
+    <div class="container trust-grid">
+      <div><span>🚚</span><strong>Hızlı Teslimat</strong><p>Kayseri içi aynı gün, Türkiye geneli kargo</p></div>
+      <div><span>🔧</span><strong>Montaj Desteği</strong><p>Uzman ekibimizle kurulum ve devreye alma</p></div>
+      <div><span>🛡️</span><strong>Garantili Ürün</strong><p>Faturalı ve garantili satış</p></div>
+      <div><span>📞</span><strong>Teknik Destek</strong><p>Doğru parça seçimi için bizi arayın</p></div>
+    </div>
+  </section>
+</main>
+
+<footer class="shop-footer">
+  <div class="container shop-footer-grid">
+    <div>
+      <h4>Kurumsal</h4>
+      <a href="index.html#hakkimizda">Hakkımızda</a>
+      <a href="index.html#hizmetler">Hizmetlerimiz</a>
+      <a href="index.html#iletisim">İletişim</a>
+    </div>
+    <div>
+      <h4>Alışveriş</h4>
+      <a href="#urunler">Tüm Ürünler</a>
+      <a href="https://wa.me/905353073060?text=Merhaba%2C%20sipari%C5%9Fimin%20durumunu%20%C3%B6%C4%9Frenmek%20istiyorum." target="_blank" rel="noopener">Sipariş Takibi</a>
+    </div>
+    <div>
+      <h4>İletişim</h4>
+      <a href="tel:+905353073060">0535 307 30 60</a>
+      <a href="tel:+905354903676">0535 490 36 76</a>
+      <p>Sanayi Mahallesi, 6016. Sokak No:9<br>Kocasinan / Kayseri</p>
+    </div>
+  </div>
+  <div class="container shop-footer-bottom">
+    <p>&copy; <span id="year"></span> Novagen Mühendislik. Tüm hakları saklıdır.</p>
+  </div>
+</footer>
+
+<div class="drawer-backdrop" id="drawerBackdrop" hidden></div>
+<aside class="cart-drawer" id="cartDrawer" aria-label="Sepet" aria-hidden="true">
+  <div class="drawer-head">
+    <h3 id="drawerTitle">Sepetim</h3>
+    <button class="drawer-close" id="drawerClose" aria-label="Kapat">✕</button>
+  </div>
+
+  <div class="drawer-body" id="cartView">
+    <ul class="cart-items" id="cartItems"></ul>
+    <p class="cart-empty" id="cartEmpty">Sepetiniz boş.</p>
+  </div>
+
+  <form class="drawer-body checkout-form" id="checkoutForm" hidden>
+    <label>Ad Soyad / Firma<input name="ad" required autocomplete="name"></label>
+    <label>Telefon<input name="telefon" type="tel" required autocomplete="tel" placeholder="05xx xxx xx xx"></label>
+    <label>Teslimat Adresi<textarea name="adres" rows="3" required autocomplete="street-address"></textarea></label>
+    <fieldset>
+      <legend>Ödeme Yöntemi</legend>
+      <label class="radio"><input type="radio" name="odeme" value="Havale / EFT" checked> Havale / EFT</label>
+      <label class="radio"><input type="radio" name="odeme" value="Kapıda / Teslimatta ödeme"> Teslimatta ödeme (Kayseri içi)</label>
+    </fieldset>
+    <label>Not (isteğe bağlı)<textarea name="not" rows="2"></textarea></label>
+    <p class="checkout-info">Siparişiniz WhatsApp üzerinden bize iletilir. Stok ve kargo bilgisiyle birlikte hesap numaramızı size gönderiyoruz.</p>
+  </form>
+
+  <div class="drawer-foot" id="drawerFoot">
+    <div class="drawer-total"><span>Toplam</span><strong id="cartTotal">0,00 TL</strong></div>
+    <button class="btn btn-primary btn-block" id="checkoutButton" disabled>Siparişi Tamamla</button>
+    <button class="btn btn-primary btn-block" id="sendOrderButton" type="submit" form="checkoutForm" hidden>WhatsApp ile Siparişi Gönder</button>
+    <button class="link-button" id="backToCart" hidden>← Sepete dön</button>
+  </div>
+</aside>
+
+<div class="product-modal" id="productModal" hidden>
+  <div class="product-modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="drawer-close modal-close" id="modalClose" aria-label="Kapat">✕</button>
+    <div class="modal-media" id="modalMedia"></div>
+    <div class="modal-info">
+      <p class="modal-category" id="modalCategory"></p>
+      <h3 id="modalTitle"></h3>
+      <p class="modal-price" id="modalPrice"></p>
+      <ul class="modal-specs" id="modalSpecs"></ul>
+      <div class="modal-actions" id="modalActions"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<a href="https://wa.me/905353073060" target="_blank" rel="noopener" class="whatsapp-float" aria-label="WhatsApp">💬</a>
+
+<script src="products.js"></script>
+<script src="magaza.js"></script>
+</body>
+</html>

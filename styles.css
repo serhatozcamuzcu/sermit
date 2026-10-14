@@ -668,3 +668,5 @@ img { max-width: 100%; display: block; }
   .header-cta { display: none; }
   .cards { grid-template-columns: 1fr; }
 }
+
+.nav a.nav-shop { color: var(--amber); font-weight: 700; }
