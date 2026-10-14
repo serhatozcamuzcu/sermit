@@ -140,6 +140,18 @@ body.no-scroll { overflow: hidden; }
   background: var(--foto) center / cover no-repeat;
   clip-path: polygon(0 0, 100% 0, 78% 100%, 0 100%);
 }
+/* Çaprazı ve sarı çizgisi görselin içinde hazır olan geniş banner görseli */
+.slide-genis::before {
+  inset: 0 auto 0 0;
+  aspect-ratio: 960 / 696;
+  background-size: 100% 100%;
+  clip-path: none;
+}
+.slide-genis .slide-text {
+  left: calc(clamp(420px, 42vw, 560px) * 960 / 696 * .84);
+  right: 2%;
+  width: auto;
+}
 .slide::after {
   content: '';
   position: absolute;
@@ -540,6 +552,8 @@ body.no-scroll { overflow: hidden; }
   .slide::before { inset: 0 0 52% 0; clip-path: polygon(0 0, 100% 0, 100% 82%, 0 100%); }
   .slide-text { top: auto; bottom: 64px; right: 0; left: 0; width: auto; padding: 0 20px; transform: none; }
   .slide.active .slide-text { animation: none; }
+  .slide-genis .slide-text { left: 0; right: 0; }
+  .slide-genis::before { inset: 0 0 52% 0; aspect-ratio: auto; background-size: cover; background-position: left center; }
   .slide::after { width: 80px; height: 80px; }
   .slider-logo { width: 150px; padding: 10px 40px 6px 10px; top: 0; bottom: auto; clip-path: polygon(0 0, 100% 0, 78% 100%, 0 100%); }
   .product-modal-card { grid-template-columns: 1fr; }
