@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Online Mağaza | Novagen Mühendislik - Jeneratör, Yedek Parça, GES</title>
-<meta name="description" content="Novagen Mühendislik online mağaza: jeneratör, jeneratör yedek parçaları, otomasyon panoları ve GES ürünleri. Kayseri / Kocasinan.">
+<title>Online Mağaza | Novagen Jeneratör - Jeneratör ve Yedek Parça</title>
+<meta name="description" content="Novagen Jeneratör online mağaza: benzinli ve dizel jeneratörler, jeneratör yedek parçaları, ATS panoları ve bakım hizmetleri. Kayseri / Kocasinan.">
 <link rel="canonical" href="https://novagenmuhendislik.com/magaza.html">
 <meta name="robots" content="index, follow">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Online Mağaza | Novagen Mühendislik">
-<meta property="og:description" content="Jeneratör, yedek parça, otomasyon ve GES ürünleri — Novagen Mühendislik online mağaza.">
+<meta property="og:title" content="Online Mağaza | Novagen Jeneratör">
+<meta property="og:description" content="Jeneratör, yedek parça, ATS panosu ve bakım hizmetleri — Novagen Jeneratör online mağaza.">
 <meta property="og:url" content="https://novagenmuhendislik.com/magaza.html">
 <meta property="og:image" content="https://novagenmuhendislik.com/images/logo-full.png">
 <meta property="og:locale" content="tr_TR">
@@ -34,10 +34,10 @@
 <header class="shop-header">
   <div class="container shop-header-inner">
     <a href="index.html" class="brand">
-      <img src="images/logo-header.png" alt="Novagen Mühendislik" class="brand-logo">
+      <img src="images/logo-header.png" alt="Novagen Jeneratör" class="brand-logo">
     </a>
     <form class="shop-search" id="searchForm" role="search">
-      <input type="search" id="searchInput" placeholder="Ürün adı yazınız (ör. AVR, jeneratör, panel)" aria-label="Ürün ara">
+      <input type="search" id="searchInput" placeholder="Ürün adı yazınız (ör. AVR, 10 kVA, kontrol modülü)" aria-label="Ürün ara">
       <button type="submit" aria-label="Ara">🔍</button>
     </form>
     <button class="cart-button" id="cartButton" aria-label="Sepetim">
@@ -53,16 +53,30 @@
 </header>
 
 <main>
-  <section class="shop-banner">
-    <div class="container shop-banner-inner">
-      <div>
-        <p class="eyebrow">Novagen Mühendislik Online Mağaza</p>
-        <h1>Jeneratör ve yedek parçada<br><span>7/24 online sipariş</span></h1>
-        <p class="hero-desc">Ürününüzü sepete ekleyin, siparişinizi oluşturun; ödeme ve teslimat için sizi hemen arayalım. Proje ürünlerinde ücretsiz keşif ve teklif.</p>
+  <section class="hero-slider" id="heroSlider" aria-roledescription="carousel">
+    <div class="slide active" style="--foto:url('images/novagen-logo-jenerator.jpg')">
+      <div class="slide-text">
+        <p class="slide-top">7/24 Online Alışveriş</p>
+        <h1>Kesintisiz enerji için<br><span>Novagen Jeneratör</span><br>online mağazası açıldı.</h1>
         <a href="#urunler" class="btn btn-primary">Ürünleri İncele</a>
       </div>
-      <img src="images/novagen-logo-jenerator.jpg" alt="Novagen jeneratör" class="shop-banner-photo">
     </div>
+    <div class="slide" style="--foto:url('images/jenerator-nakliye.jpg')">
+      <div class="slide-text">
+        <p class="slide-top">Satış · Nakliye · Kurulum</p>
+        <h2>Jeneratörünüzü<br><span>yerine kadar getirip</span><br>devreye alıyoruz.</h2>
+        <a href="https://wa.me/905353073060" target="_blank" rel="noopener" class="btn btn-primary">Teklif Alın</a>
+      </div>
+    </div>
+    <div class="slide" style="--foto:url('images/jenerator-bakim-2.jpg')">
+      <div class="slide-text">
+        <p class="slide-top">Bakım · Onarım · Yedek Parça</p>
+        <h2>AVR, kontrol modülü,<br><span>governör ve tüm</span><br>yedek parçalar stokta.</h2>
+        <a href="#urunler" class="btn btn-primary">Yedek Parçalar</a>
+      </div>
+    </div>
+    <img src="images/logo-header.png" alt="" class="slider-logo" aria-hidden="true">
+    <div class="slider-dots" id="sliderDots"></div>
   </section>
 
   <section class="section shop-section">
@@ -122,7 +136,7 @@
     </div>
   </div>
   <div class="container shop-footer-bottom">
-    <p>&copy; <span id="year"></span> Novagen Mühendislik. Tüm hakları saklıdır.</p>
+    <p>&copy; <span id="year"></span> Novagen Jeneratör. Tüm hakları saklıdır.</p>
   </div>
 </footer>
 
@@ -179,5 +193,6 @@
 
 <script src="products.js"></script>
 <script src="magaza.js"></script>
+<script src="slider.js"></script>
 </body>
 </html>

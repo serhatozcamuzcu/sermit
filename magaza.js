@@ -6,8 +6,10 @@ document.getElementById('year').textContent = new Date().getFullYear();
 const paraBicimi = new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const tl = (tutar) => `${paraBicimi.format(tutar)} TL`;
 
+let urunler = [];
+
 const kategoriBul = (id) => KATEGORILER.find((k) => k.id === id);
-const urunBul = (id) => URUNLER.find((u) => u.id === id);
+const urunBul = (id) => urunler.find((u) => u.id === id);
 
 function escapeHtml(metin) {
   return String(metin).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -17,9 +19,16 @@ function whatsappLink(mesaj) {
   return `https://wa.me/${WHATSAPP_NUMARA}?text=${encodeURIComponent(mesaj)}`;
 }
 
+function gorselAdresi(gorsel) {
+  if (!/^https?:\/\//i.test(gorsel)) return `images/${gorsel}`;
+  // Google Drive paylaşım bağlantısını doğrudan gösterilebilir görsele çevir.
+  const drive = gorsel.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?.*id=)([\w-]+)/);
+  return drive ? `https://drive.google.com/thumbnail?id=${drive[1]}&sz=w1000` : gorsel;
+}
+
 function urunGorseli(urun) {
   if (urun.gorsel) {
-    return `<img src="images/${escapeHtml(urun.gorsel)}" alt="${escapeHtml(urun.ad)}" loading="lazy">`;
+    return `<img src="${escapeHtml(gorselAdresi(urun.gorsel))}" alt="${escapeHtml(urun.ad)}" loading="lazy">`;
   }
   return `<span class="product-placeholder">${kategoriBul(urun.kategori)?.ikon || '📦'}</span>`;
 }
@@ -35,7 +44,7 @@ function sepetiOku() {
   }
 }
 
-let sepet = sepetiOku();
+let sepet = [];
 
 function sepetiKaydet() {
   try {
@@ -198,7 +207,7 @@ function trKucuk(metin) {
 
 function urunleriCiz() {
   const arama = trKucuk(aramaMetni.trim());
-  let liste = URUNLER.filter((u) =>
+  let liste = urunler.filter((u) =>
     (seciliKategori === 'hepsi' || u.kategori === seciliKategori) &&
     (!arama || trKucuk(`${u.ad} ${(u.ozellikler || []).join(' ')}`).includes(arama))
   );
@@ -258,9 +267,22 @@ document.getElementById('searchInput').addEventListener('input', (e) => {
 /* ---------- Kategoriler ---------- */
 
 const categoryNav = document.getElementById('categoryNav');
-categoryNav.insertAdjacentHTML('beforeend', KATEGORILER.map((k) =>
-  `<a href="#urunler" data-kategori="${k.id}">${escapeHtml(k.ad)}</a>`
-).join(''));
+const categoryCards = document.getElementById('categoryCards');
+
+function kategorileriCiz() {
+  const dolu = KATEGORILER.filter((k) => urunler.some((u) => u.kategori === k.id));
+  categoryNav.querySelectorAll('a[data-kategori]:not([data-kategori="hepsi"])').forEach((a) => a.remove());
+  categoryNav.insertAdjacentHTML('beforeend', dolu.map((k) =>
+    `<a href="#urunler" data-kategori="${k.id}">${escapeHtml(k.ad)}</a>`
+  ).join(''));
+  categoryCards.innerHTML = dolu.map((k) => `
+    <button class="category-card" data-kategori="${k.id}">
+      <span class="category-icon">${k.ikon}</span>
+      <strong>${escapeHtml(k.ad)}</strong>
+      <small>${escapeHtml(k.aciklama)}</small>
+    </button>`).join('');
+}
+
 categoryNav.addEventListener('click', (e) => {
   const link = e.target.closest('a[data-kategori]');
   if (!link) return;
@@ -268,13 +290,6 @@ categoryNav.addEventListener('click', (e) => {
   kategoriSec(link.dataset.kategori);
 });
 
-const categoryCards = document.getElementById('categoryCards');
-categoryCards.innerHTML = KATEGORILER.map((k) => `
-  <button class="category-card" data-kategori="${k.id}">
-    <span class="category-icon">${k.ikon}</span>
-    <strong>${escapeHtml(k.ad)}</strong>
-    <small>${escapeHtml(k.aciklama)}</small>
-  </button>`).join('');
 categoryCards.addEventListener('click', (e) => {
   const kart = e.target.closest('[data-kategori]');
   if (kart) kategoriSec(kart.dataset.kategori);
@@ -334,5 +349,109 @@ function bildirimGoster(metin) {
   toastZamanlayici = setTimeout(() => toast.classList.remove('show'), 2400);
 }
 
-sepetiCiz();
-urunleriCiz();
+/* ---------- Ürünleri yükle (Google E-Tablo veya products.js) ---------- */
+
+function sadeMetin(metin) {
+  return String(metin || '').toLocaleLowerCase('tr-TR')
+    .replace(/ı/g, 'i').replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's').replace(/ö/g, 'o').replace(/ç/g, 'c')
+    .replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function csvOku(metin) {
+  const satirlar = [];
+  let satir = [];
+  let hucre = '';
+  let tirnakta = false;
+  for (let i = 0; i < metin.length; i++) {
+    const c = metin[i];
+    if (tirnakta) {
+      if (c === '"' && metin[i + 1] === '"') { hucre += '"'; i++; }
+      else if (c === '"') tirnakta = false;
+      else hucre += c;
+    } else if (c === '"') tirnakta = true;
+    else if (c === ',') { satir.push(hucre); hucre = ''; }
+    else if (c === '\n' || c === '\r') {
+      if (c === '\r' && metin[i + 1] === '\n') i++;
+      satir.push(hucre); satirlar.push(satir); satir = []; hucre = '';
+    } else hucre += c;
+  }
+  if (hucre || satir.length) { satir.push(hucre); satirlar.push(satir); }
+  return satirlar.filter((s) => s.some((h) => h.trim()));
+}
+
+// "18.500", "18.500,50", "18500 TL" gibi yazımları sayıya çevirir. Boşsa null (Teklif Al).
+function fiyatOku(deger) {
+  let metin = String(deger || '').replace(/[^\d.,]/g, '');
+  if (!metin) return null;
+  if (metin.includes(',')) metin = metin.replace(/\./g, '').replace(',', '.');
+  else if (/^\d{1,3}(\.\d{3})+$/.test(metin)) metin = metin.replace(/\./g, '');
+  const sayi = Number(metin);
+  return Number.isFinite(sayi) && sayi > 0 ? sayi : null;
+}
+
+function kategoriCoz(deger) {
+  const sade = sadeMetin(deger);
+  if (!sade) return KATEGORILER[0].id;
+  const bulunan = KATEGORILER.find((k) => sadeMetin(k.id) === sade || sadeMetin(k.ad) === sade);
+  if (bulunan) return bulunan.id;
+  // Tabloda yeni bir kategori adı yazılmışsa otomatik olarak eklenir.
+  const yeni = { id: sade.replace(/ /g, '-'), ad: String(deger).trim(), ikon: '📦', aciklama: '' };
+  KATEGORILER.push(yeni);
+  return yeni.id;
+}
+
+function tablodanUrunler(csv) {
+  const [baslik, ...satirlar] = csvOku(csv);
+  const sutun = (...adlar) => baslik.findIndex((b) => adlar.includes(sadeMetin(b)));
+  const s = {
+    kategori: sutun('kategori'),
+    ad: sutun('urun adi', 'urun', 'ad'),
+    fiyat: sutun('fiyat', 'fiyat tl'),
+    ozellikler: sutun('ozellikler', 'ozellik', 'aciklama'),
+    gorsel: sutun('gorsel', 'resim', 'fotograf', 'gorsel linki'),
+    yayinda: sutun('yayinda', 'aktif', 'durum'),
+  };
+  if (s.ad < 0) throw new Error('Tabloda "Ürün Adı" sütunu bulunamadı');
+  const hucre = (satir, i) => (i >= 0 ? (satir[i] || '').trim() : '');
+  return satirlar
+    .filter((satir) => hucre(satir, s.ad) && !['hayir', 'pasif', 'yok', '0'].includes(sadeMetin(hucre(satir, s.yayinda))))
+    .map((satir) => ({
+      kategori: kategoriCoz(hucre(satir, s.kategori)),
+      ad: hucre(satir, s.ad),
+      fiyat: fiyatOku(hucre(satir, s.fiyat)),
+      gorsel: hucre(satir, s.gorsel),
+      ozellikler: hucre(satir, s.ozellikler).split(/[;|\n]/).map((o) => o.trim()).filter(Boolean),
+    }));
+}
+
+function kimlikleriAta(liste) {
+  const kullanilan = new Set();
+  return liste.map((urun) => {
+    const temel = sadeMetin(urun.ad).replace(/ /g, '-') || 'urun';
+    let id = temel;
+    for (let n = 2; kullanilan.has(id); n++) id = `${temel}-${n}`;
+    kullanilan.add(id);
+    return { ...urun, id };
+  });
+}
+
+async function urunleriYukle() {
+  let liste = URUNLER;
+  if (GOOGLE_TABLO_CSV) {
+    try {
+      const yanit = await fetch(GOOGLE_TABLO_CSV, { cache: 'no-store' });
+      if (!yanit.ok) throw new Error(`HTTP ${yanit.status}`);
+      liste = tablodanUrunler(await yanit.text());
+    } catch (hata) {
+      console.error('Ürün tablosu okunamadı, yedek liste kullanılıyor:', hata);
+    }
+  }
+  urunler = kimlikleriAta(liste);
+  sepet = sepetiOku();
+  kategorileriCiz();
+  sepetiCiz();
+  urunleriCiz();
+}
+
+productGrid.innerHTML = '<p class="loading-note">Ürünler yükleniyor…</p>';
+urunleriYukle();

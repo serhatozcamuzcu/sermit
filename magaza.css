@@ -117,30 +117,102 @@ body.no-scroll { overflow: hidden; }
 .shop-nav-inner a:hover { color: var(--text-light); }
 .shop-nav-inner a.active { color: var(--amber); border-bottom-color: var(--amber); }
 
-/* Banner */
-.shop-banner {
-  background: radial-gradient(circle at 20% 20%, #1e293b 0%, var(--navy) 60%);
+/* Banner (slayt) */
+.hero-slider {
+  position: relative;
+  height: clamp(420px, 42vw, 560px);
+  background: #111827;
+  overflow: hidden;
   color: var(--text-light);
-  padding: 60px 0;
 }
-.shop-banner-inner {
-  display: grid;
-  grid-template-columns: 1.2fr .8fr;
-  gap: 40px;
-  align-items: center;
+.slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .8s ease, visibility .8s;
 }
-.shop-banner h1 {
-  font-size: clamp(30px, 4vw, 46px);
+.slide.active { opacity: 1; visibility: visible; }
+.slide::before {
+  content: '';
+  position: absolute;
+  inset: 0 45% 0 0;
+  background: var(--foto) center / cover no-repeat;
+  clip-path: polygon(0 0, 100% 0, 78% 100%, 0 100%);
+}
+.slide::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 150px;
+  height: 150px;
+  background: var(--amber);
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+.slide-text {
+  position: absolute;
+  top: 50%;
+  right: 6%;
+  width: min(560px, 50%);
+  transform: translateY(-50%);
+  text-align: center;
+  z-index: 1;
+}
+.slide-top {
+  margin: 0 0 14px;
+  color: var(--amber);
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-size: 14px;
+}
+.slide-text h1,
+.slide-text h2 {
+  margin: 0 0 26px;
+  font-size: clamp(28px, 3.4vw, 50px);
   line-height: 1.15;
-  margin: 0 0 18px;
+  font-weight: 800;
 }
-.shop-banner h1 span { color: var(--amber); }
-.shop-banner-photo {
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  border-radius: var(--radius);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+.slide-text h1 span,
+.slide-text h2 span { color: var(--amber); }
+.slide.active .slide-text { animation: slide-in .9s ease both; }
+@keyframes slide-in {
+  from { opacity: 0; transform: translate(30px, -50%); }
+  to { opacity: 1; transform: translate(0, -50%); }
+}
+.slider-logo {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 2;
+  width: 260px;
+  padding: 26px 70px 14px 20px;
+  background: var(--amber);
+  clip-path: polygon(0 0, 78% 0, 100% 100%, 0 100%);
+}
+.slider-dots {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 3;
+}
+.slider-dots button {
+  width: 22px;
+  height: 4px;
+  border: 0;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.7);
+  cursor: pointer;
+  transition: width .3s, background .3s;
+}
+.slider-dots button.active { width: 48px; background: var(--amber); }
+
+@media (prefers-reduced-motion: reduce) {
+  .slide, .slide.active .slide-text { transition: none; animation: none; }
 }
 
 /* Bölümler */
@@ -273,6 +345,7 @@ body.no-scroll { overflow: hidden; }
 .product-price { margin: 0 0 14px; font-size: 18px; font-weight: 800; }
 .product-body .btn { padding: 11px 16px; font-size: 14px; }
 
+.loading-note { grid-column: 1 / -1; text-align: center; color: #64748b; }
 .empty-note { text-align: center; color: #475569; }
 .empty-note a { color: var(--amber-dark); font-weight: 600; }
 
@@ -463,8 +536,12 @@ body.no-scroll { overflow: hidden; }
 /* Mobil */
 @media (max-width: 900px) {
   .category-cards, .product-grid, .trust-grid { grid-template-columns: repeat(2, 1fr); }
-  .shop-banner-inner { grid-template-columns: 1fr; }
-  .shop-banner-photo { display: none; }
+  .hero-slider { height: 560px; }
+  .slide::before { inset: 0 0 52% 0; clip-path: polygon(0 0, 100% 0, 100% 82%, 0 100%); }
+  .slide-text { top: auto; bottom: 64px; right: 0; left: 0; width: auto; padding: 0 20px; transform: none; }
+  .slide.active .slide-text { animation: none; }
+  .slide::after { width: 80px; height: 80px; }
+  .slider-logo { width: 150px; padding: 10px 40px 6px 10px; top: 0; bottom: auto; clip-path: polygon(0 0, 100% 0, 78% 100%, 0 100%); }
   .product-modal-card { grid-template-columns: 1fr; }
   .modal-media { aspect-ratio: 16 / 10; }
 }
